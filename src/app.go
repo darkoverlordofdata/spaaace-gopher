@@ -1,8 +1,6 @@
 package main
 
-import "C"
-
-
+// main
 func main() {
 
 	game := NewShmupWarz(800, 600, "Spaaace Gopher")

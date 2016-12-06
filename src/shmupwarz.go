@@ -1,6 +1,6 @@
 package main
 
-import "C"
+//import "C"
 
 import (
 	"github.com/veandco/go-sdl2/sdl"
@@ -49,7 +49,6 @@ type ShmupWarz struct {
 //mix.INIT_OGG
 // NewShmupWarz Returns new shmupwarz
 func NewShmupWarz(width int, height int, title string) (this *ShmupWarz) {
-	//this = &ShmupWarz{}
 	this = new(ShmupWarz)
 	this.Width = width
 	this.Height = height
@@ -108,41 +107,75 @@ func (this *ShmupWarz) Start() {
 	this.Game.Start()
 }
 
+// OnEvent
+func (this *ShmupWarz) OnEvent(event sdl.Event) {
+	switch t := event.(type) {
+	case *sdl.QuitEvent:
+		this.Game.Quit()
+
+	case *sdl.MouseButtonEvent:
+		this.Sound.Play(2, 0)
+		if t.Type == sdl.MOUSEBUTTONDOWN && t.Button == sdl.BUTTON_LEFT {
+			this.alpha = 255
+			//showText = true
+
+			if this.State == StateRun {
+				this.text = this.StateText[StateFlap]
+				this.State = StateFlap
+			} else if this.State == StateFlap {
+				this.text = this.StateText[StateDead]
+				this.State = StateDead
+			} else if this.State == StateDead {
+				this.text = this.StateText[StateRun]
+				this.State = StateRun
+			}
+		}
+
+	case *sdl.KeyDownEvent:
+		if t.Keysym.Scancode == sdl.SCANCODE_ESCAPE || t.Keysym.Scancode == sdl.SCANCODE_AC_BACK {
+			this.Game.Quit()
+		}
+	}
+
+}
+
 // Update
 // Implenents the abstract method Update
 // game logic, physics, etc goes here
 func (this *ShmupWarz) Update(delta float64) {
 	// Sprite size
 
-	for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-		switch t := event.(type) {
-		case *sdl.QuitEvent:
-			this.Game.Quit()
+	//event := sdl.PollEvent()
+	//for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
+	//if event != nil {
+	// switch t := event.(type) {
+	// case *sdl.QuitEvent:
+	// 	this.Game.Quit()
 
-		case *sdl.MouseButtonEvent:
-			this.Sound.Play(2, 0)
-			if t.Type == sdl.MOUSEBUTTONDOWN && t.Button == sdl.BUTTON_LEFT {
-				this.alpha = 255
-				//showText = true
+	// case *sdl.MouseButtonEvent:
+	// 	this.Sound.Play(2, 0)
+	// 	if t.Type == sdl.MOUSEBUTTONDOWN && t.Button == sdl.BUTTON_LEFT {
+	// 		this.alpha = 255
+	// 		//showText = true
 
-				if this.State == StateRun {
-					this.text = this.StateText[StateFlap]
-					this.State = StateFlap
-				} else if this.State == StateFlap {
-					this.text = this.StateText[StateDead]
-					this.State = StateDead
-				} else if this.State == StateDead {
-					this.text = this.StateText[StateRun]
-					this.State = StateRun
-				}
-			}
+	// 		if this.State == StateRun {
+	// 			this.text = this.StateText[StateFlap]
+	// 			this.State = StateFlap
+	// 		} else if this.State == StateFlap {
+	// 			this.text = this.StateText[StateDead]
+	// 			this.State = StateDead
+	// 		} else if this.State == StateDead {
+	// 			this.text = this.StateText[StateRun]
+	// 			this.State = StateRun
+	// 		}
+	// 	}
 
-		case *sdl.KeyDownEvent:
-			if t.Keysym.Scancode == sdl.SCANCODE_ESCAPE || t.Keysym.Scancode == sdl.SCANCODE_AC_BACK {
-				this.Game.Quit()
-			}
-		}
-	}
+	// case *sdl.KeyDownEvent:
+	// 	if t.Keysym.Scancode == sdl.SCANCODE_ESCAPE || t.Keysym.Scancode == sdl.SCANCODE_AC_BACK {
+	// 		this.Game.Quit()
+	// 	}
+	// }
+	//}
 
 	//start := timgame.Now()
 
@@ -177,9 +210,7 @@ func (this *ShmupWarz) Update(delta float64) {
 	this.alpha -= 10
 	if this.alpha <= 10 {
 		this.alpha = 255
-		//showText = false
 	}
-
 }
 
 // Draw
@@ -191,16 +222,11 @@ func (this *ShmupWarz) Draw(delta float64) {
 	clip := this.clips[this.frame/2]
 
 	this.Renderer.Clear()
-	this.Renderer.SetDrawColor(this.r, this.g, this.b, this.a)
-	this.Renderer.FillRect(nil)
 	this.Renderer.Copy(this.Background, nil, nil)
+	this.Sprite.SetColorMod(this.r, this.g, this.b)
 	this.Renderer.Copy(this.Sprite, clip, &sdl.Rect{X: x - (SIZE / 2), Y: y - (SIZE / 2), W: SIZE, H: SIZE})
-
-	// if showText {
 	this.text.Texture.SetAlphaMod(this.alpha)
 	this.Renderer.Copy(this.text.Texture, nil, &sdl.Rect{X: x - (this.text.Width / 2), Y: y - SIZE*1.5, W: this.text.Width, H: this.text.Height})
-	// }
-
 	this.Renderer.Present()
 
 }

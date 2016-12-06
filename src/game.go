@@ -1,6 +1,6 @@
 package main
 
-import "C"
+//import "C"
 
 import (
 	"runtime"
@@ -39,6 +39,7 @@ type IGame interface {
 	Start()
 	Update(delta float64)
 	Draw(delta float64)
+	OnEvent(evt sdl.Event)
 }
 
 // Running
@@ -103,6 +104,7 @@ func (this *Game) Destroy() {
 func (this *Game) Run(subclass IGame) {
 	var lastTime float64
 	var curTime float64
+	var event sdl.Event
 
 	subclass.Initialize()
 	subclass.Start()
@@ -111,6 +113,11 @@ func (this *Game) Run(subclass IGame) {
 		curTime = float64(time.Now().UnixNano()) / 1000000.0
 		this.Delta = curTime - lastTime
 		lastTime = curTime
+
+		event = sdl.PollEvent()
+		if event != nil {
+			subclass.OnEvent(event)
+		}
 
 		subclass.Update(this.Delta)
 		subclass.Draw(this.Delta)
