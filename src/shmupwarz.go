@@ -101,9 +101,7 @@ func (this *ShmupWarz) Start() {
 	this.Music.Play(-1)
 
 	this.alpha = 255
-	//var showText = true
 	this.text = this.StateText[StateRun]
-
 	this.Game.Start()
 }
 
@@ -117,8 +115,6 @@ func (this *ShmupWarz) OnEvent(event sdl.Event) {
 		this.Sound.Play(2, 0)
 		if t.Type == sdl.MOUSEBUTTONDOWN && t.Button == sdl.BUTTON_LEFT {
 			this.alpha = 255
-			//showText = true
-
 			if this.State == StateRun {
 				this.text = this.StateText[StateFlap]
 				this.State = StateFlap
@@ -143,41 +139,6 @@ func (this *ShmupWarz) OnEvent(event sdl.Event) {
 // Implenents the abstract method Update
 // game logic, physics, etc goes here
 func (this *ShmupWarz) Update(delta float64) {
-	// Sprite size
-
-	//event := sdl.PollEvent()
-	//for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-	//if event != nil {
-	// switch t := event.(type) {
-	// case *sdl.QuitEvent:
-	// 	this.Game.Quit()
-
-	// case *sdl.MouseButtonEvent:
-	// 	this.Sound.Play(2, 0)
-	// 	if t.Type == sdl.MOUSEBUTTONDOWN && t.Button == sdl.BUTTON_LEFT {
-	// 		this.alpha = 255
-	// 		//showText = true
-
-	// 		if this.State == StateRun {
-	// 			this.text = this.StateText[StateFlap]
-	// 			this.State = StateFlap
-	// 		} else if this.State == StateFlap {
-	// 			this.text = this.StateText[StateDead]
-	// 			this.State = StateDead
-	// 		} else if this.State == StateDead {
-	// 			this.text = this.StateText[StateRun]
-	// 			this.State = StateRun
-	// 		}
-	// 	}
-
-	// case *sdl.KeyDownEvent:
-	// 	if t.Keysym.Scancode == sdl.SCANCODE_ESCAPE || t.Keysym.Scancode == sdl.SCANCODE_AC_BACK {
-	// 		this.Game.Quit()
-	// 	}
-	// }
-	//}
-
-	//start := timgame.Now()
 
 	switch this.State {
 	case StateRun:
