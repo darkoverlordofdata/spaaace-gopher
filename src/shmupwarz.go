@@ -10,6 +10,80 @@ import (
 
 const SIZE = 128
 
+const (
+	EntityTypeBackground = iota
+	EntityTypeGopher     = iota
+	EntityTypeText       = iota
+)
+
+type AbstractComponent struct{}
+type EntityTypeComponent struct {
+	AbstractComponent
+	Ordinal int
+}
+type StateComponent struct {
+	AbstractComponent
+	Value int
+}
+type PositionComponent struct {
+	AbstractComponent
+	X int
+	Y int
+}
+type ColorComponent struct {
+	AbstractComponent
+	R byte
+	G byte
+	B byte
+	A byte
+}
+type SpriteComponent struct {
+	AbstractComponent
+	Sprite *sdl.Texture
+}
+type TextComponent struct {
+	AbstractComponent
+	Value   *string
+	Rect    sdl.Rect
+	Texture *sdl.Texture
+}
+
+type Entity struct {
+	EntityType EntityTypeComponent
+	State      StateComponent
+	Position   PositionComponent
+	Color      ColorComponent
+	Sprite     SpriteComponent
+	Text       TextComponent
+}
+
+func (this *ShmupWarz) CreateGopherEntity() (e *Entity) {
+	e = new(Entity)
+	e.EntityType.Ordinal = EntityTypeGopher
+	e.Sprite = this.LoadTexture("assets/images/sprite.png")
+	return
+}
+
+func (this *ShmupWarz) CreateBackgroundEntity() (e *Entity) {
+	e = new(Entity)
+	e.EntityType.Ordinal = EntityTypeBackground
+	e.Sprite = this.LoadTexture("assets/images/BackdropBlackLittleSparkBlack.png")
+	return
+}
+
+func (this *ShmupWarz) CreateTextEntity() (e *Entity) {
+	e = new(Entity)
+	e.EntityType.Ordinal = EntityTypeText
+	return
+}
+
+// Text State text structure
+type TextEntity struct {
+	Value   *string
+	Rect    sdl.Rect
+	Texture *sdl.Texture
+}
+
 // stateText States text
 var stateText = map[int]string{
 	StateRun:  "RUN",
@@ -44,9 +118,9 @@ type ShmupWarz struct {
 	g          byte
 	b          byte
 	a          byte
+	//Entities   []interface{}
 }
 
-//mix.INIT_OGG
 // NewShmupWarz Returns new shmupwarz
 func NewShmupWarz(width int, height int, title string) (this *ShmupWarz) {
 	this = new(ShmupWarz)
@@ -63,6 +137,7 @@ func NewShmupWarz(width int, height int, title string) (this *ShmupWarz) {
 // use to initialize SDL submodules
 func (this *ShmupWarz) Initialize() {
 	this.Game.Initialize()
+
 	return
 }
 
@@ -71,6 +146,13 @@ func (this *ShmupWarz) Initialize() {
 // called by the game engine prior to the game loop
 // use to load resources
 func (this *ShmupWarz) Start() {
+	// GopherEntity{},
+	// TextEntity{}}
+
+	// this.Entities = []interface{}{
+	// 	this.CreateGopherEntity(),
+	// 	this.CreateTextEntity()}
+
 	// Sprite rects
 	for x := 0; x < 6; x++ {
 		rect := &sdl.Rect{X: int32(SIZE * x), Y: 0, W: SIZE, H: SIZE}
