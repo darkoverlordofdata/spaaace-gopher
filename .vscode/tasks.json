@@ -13,6 +13,7 @@
                 "-o",
                 "./bin/shmupwarz",
                 "src/game.go",
+                "src/components.go",
                 "src/shmupwarz.go"
             ]
         }
